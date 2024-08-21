@@ -22,7 +22,7 @@ class UserSeeder extends Seeder
             [
                 'first_name' => 'Admin',
                 'last_name' => 'User',
-                'image' => '',
+                'image' => asset('users/user_avatar.png'),
                 'email' => 'admin@admin.com',
                 'password'=>bcrypt('11112222#'),
                 'email_verified_at'  => Carbon::now()->toDateTimeString(),

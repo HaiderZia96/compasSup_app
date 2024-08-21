@@ -19,7 +19,7 @@ class AuthenticationController extends Controller
     use Response;
 
     public $data;
-
+    public $pic = [];
     public $dataArray = [];
 
 
@@ -61,16 +61,35 @@ class AuthenticationController extends Controller
 
         $image = $request->file('image'); // Ensure you get the uploaded file
 
-       // Get the original file name with extension
+        // Get the original file name with extension
         $imageName = $image->getClientOriginalName();
 
-       // Store the image in the 'public' disk, which maps to 'storage/app/public' directory
-        $image_uploaded_path = $image->storeAs('users', $imageName, 'public');
+        // Store the image in the 'public' disk, which maps to 'storage/app/public' directory
+        $image_uploaded_path = $image->storeAs('users', $imageName);
 
-        // Generate the complete URL including the base URL
+        // complete URL including the base URL
         $image_url = url(Storage::url($image_uploaded_path));
 
-dd($image_url);
+
+        $uploadedImageResponse = array(
+            "name" => basename($image_uploaded_path),
+            "url" => $image_url,
+            "type" => $image->getMimeType()
+        );
+
+
+        // Get the original file name with extension
+//        $imageName = $image->getClientOriginalName();
+
+        // Store the image in the 'public' disk, which maps to 'storage/app/public' directory
+//        $image_uploaded_path = $image->storeAs('users', $imageName, 'public');
+
+        // complete URL including the base URL
+        // $image_url = url(Storage::url($image_uploaded_path));
+//        $modified_path = 'public/storage/' . $image_uploaded_path;
+//        $image_url = url($modified_path);
+        // dd($image_url);
+
         $uploadedImageResponse = array(
             "name" => basename($image_uploaded_path),
             "url" => $image_url,
@@ -87,18 +106,16 @@ dd($image_url);
             'email_verified_at'  => Carbon::now()->toDateTimeString(),
         ]);
 
-
-//        $user = Auth::login($user);
-
         // fetch the newly created user
         $user = User::where('email', $request->email)->first();
 
         // prepare response
         $this->data = ['status_code' => 200, 'code' => 100200, 'response' => '',
-            "success" =>["User Sign-up successfully."],
+            "success" =>["User sign-up successfully."],
             'data' => [
                 'id' => $user->id,
-                'name' => $user->name,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
                 'email' => $user->email,
                 'created_at' => $user->created_at,
                 'image' => $uploadedImageResponse,
@@ -172,16 +189,16 @@ dd($image_url);
         }
 
         //  User Role
-        if ($user->user_role != 'A') {
-            $this->data = ['status_code' => 200, 'code' => 100401, 'response' => '',
-                "success" => ["Your User Account Role is not Admin."],
-                'data' => [
-
-                ]
-            ];
-            $this->setResponse($this->data);
-            return $this->getResponse();
-        }
+//        if ($user->user_role != 'A') {
+//            $this->data = ['status_code' => 200, 'code' => 100401, 'response' => '',
+//                "success" => ["Your User Account Role is not Admin."],
+//                'data' => [
+//
+//                ]
+//            ];
+//            $this->setResponse($this->data);
+//            return $this->getResponse();
+//        }
         //  Verified Email
         if ($user->email_verified_at == null) {
             $this->data = ['status_code' => 200, 'code' => 100401, 'response' => '', "success" => ["Please verify your email"], 'data' => []];
@@ -203,14 +220,25 @@ dd($image_url);
             $user->save();
 
             // Get the default avatar image
-            $avatarPath = public_path('users/user_avatar_default.png');
-            $avatarUrl = asset('users/user_avatar_default.png');
+            $avatarPath = public_path('users/user_avatar.png');
+
+            $avatarUrl = asset('users/user_avatar.png');
 
             $file = File::get($avatarPath);
             $mimeType = File::mimeType($avatarPath);
 
             // Base64 encode the image
             $encodedImage = base64_encode($file);
+
+
+//            $pic = [
+//                'image' => $user->image
+//            ];
+
+            if(isset($user->image)){
+                $avatarUrl = $user->image;
+//                $mimeType = File::mimeType($avatarPath);
+            }
 
             $this->data = [
                 'status_code' => 200,
@@ -221,13 +249,15 @@ dd($image_url);
                 'data' =>
                     [
                         "id" => $user->id,
-                        "name" => $user->name,
+                        "first_name" => $user->first_name,
+                        "last_name" => $user->last_name,
                         "email" => $user->email,
                         'image' => [
                             'url' => $avatarUrl,
                             // mime_type
-                            'type' => $mimeType,
-                        ]
+//                            'type' => $mimeType,
+                        ],
+                        "last_login" => $user->last_login
                     ]
 
             ];

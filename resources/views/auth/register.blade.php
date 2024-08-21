@@ -1,12 +1,19 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
+    <form method="POST" action="{{ route('register') }}" enctype ="multipart/form-data">
         @csrf
 
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+        <!-- First Name -->
+        <div class="mt-4">
+            <x-input-label for="first_name" :value="__('First Name')" />
+            <x-text-input id="first_name" class="block mt-1 w-full" type="text" name="first_name" :value="old('first_name')" required autofocus autocomplete="first_name" />
+            <x-input-error :messages="$errors->get('first_name')" class="mt-2" />
+        </div>
+
+        <!-- Last Name -->
+        <div class="mt-4">
+            <x-input-label for="last_name" :value="__('Last Name')" />
+            <x-text-input id="last_name" class="block mt-1 w-full" type="text" name="last_name" :value="old('last_name')" required autofocus autocomplete="last_name" />
+            <x-input-error :messages="$errors->get('last_name')" class="mt-2" />
         </div>
 
         <!-- Email Address -->
@@ -37,6 +44,18 @@
                             name="password_confirmation" required autocomplete="new-password" />
 
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+        </div>
+
+        {{-- Profile Image --}}
+{{--        <div class="mt-4">--}}
+{{--            <x-input-label for="profile_image" :value="__('Profile Image')" />--}}
+{{--            <input type="file" id="profile_image" class="block mt-1 w-full" name="profile_image" />--}}
+{{--            <x-input-error :messages="$errors->get('profile_image')" class="mt-2" />--}}
+{{--        </div>--}}
+        <div class="mt-4">
+            <x-input-label for="profile_image" :value="__('Profile Image')" />
+            <input id="profile_image" class="block mt-1 w-full border border-gray-300 rounded-md py-2 pl-10 pr-3 text-sm leading-5" type="file" name="profile_image" />
+            <x-input-error :messages="$errors->get('profile_image')" class="mt-2" />
         </div>
 
         <!--  User Role -->
