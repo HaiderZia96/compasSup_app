@@ -38,7 +38,7 @@ class AuthenticationController extends Controller
 //        ]);
 
         // validation rules
-        $rules = ['name' => ['required', 'string', 'max:255'],'surname' => ['required', 'string', 'max:255'],'high_school' => ['required', 'string'],'postal_code' => ['required', 'string'],'date_of_birth' => ['required', 'date_format:Y-m-d'], 'mobile_number' => ['required', 'int'], 'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],'password' => ['required', 'confirmed', Rules\Password::defaults()],'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048']];
+        $rules = ['name' => ['required', 'string', 'max:255'],'surname' => ['required', 'string', 'max:255'],'high_school' => ['required', 'string'],'postal_code' => ['required', 'string'],'date_of_birth' => ['required', 'date_format:Y-m-d'], 'mobile_number' => ['required', 'regex:/^\+\d{1,3}\d{6,14}$/'], 'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],'password' => ['required', 'confirmed', Rules\Password::defaults()],'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:2048']];
 
         // validation messages
         $messages = ['name.required' => 'Please enter name.','surname.required' => 'Please enter surname.','high_school.required' => 'Please enter high school.','postal_code.required' => 'Please enter postal code.','date_of_birth.required' => 'Please enter date of birth.','mobile_number.required' => 'Please enter mobile number.','email.required' => 'Please enter a email.', 'email.unique' => 'A user with this email already exists.','password.required' => 'Please enter a password.','image.required' => 'Please upload a image.'];
@@ -72,17 +72,19 @@ class AuthenticationController extends Controller
         $slugifiedName = Str::slug($originalName) . '.' . $extension;
 
         // Store the image in the 'public' disk, which maps to 'storage/app/public' directory
-        $image_uploaded_path = $image->storeAs('users', $slugifiedName, 'public');
+        $image_uploaded_path = $image->storeAs('users', $slugifiedName , 'public');
 
-        // Complete URL including the base URL
-        $image_url = url(Storage::url($image_uploaded_path));
+        // Complete URL including the base live URL
+//        $image_url = url(Storage::url($image_uploaded_path));
 
+        $modified_path = 'public/storage/' . $image_uploaded_path;
+        $image_url = url($modified_path);
 
-        $uploadedImageResponse = array(
-            "name" => basename($image_uploaded_path),
-            "url" => $image_url,
-            "type" => $image->getMimeType()
-        );
+//        $uploadedImageResponse = array(
+//            "name" => basename($image_uploaded_path),
+//            "url" => $image_url,
+//            "type" => $image->getMimeType()
+//        );
 
 
         // Get the original file name with extension
