@@ -23,10 +23,11 @@ class ResetPasswordController extends Controller
     public function resetPassword(Request $request){
 
         // validation rules
-        $rules = ['email'=>['required','email','exists:users'],'otp'=>['required','max:4'],'password' => ['required', 'string', 'min:8', 'confirmed'],'password_confirmation' => ['required', 'string', 'min:8']];
+//        $rules = ['email'=>['required','email','exists:users'],'otp'=>['required','max:4'],'password' => ['required', 'string', 'min:8', 'confirmed'],'password_confirmation' => ['required', 'string', 'min:8']];
+        $rules = ['email'=>['required','email','exists:users'],'password' => ['required', 'string', 'min:8', 'confirmed'],'password_confirmation' => ['required', 'string', 'min:8']];
 
         // validation messages
-        $messages = ['email.required' => 'Please enter a email.', 'otp.required' => 'Please enter a otp code.', 'password.required' => 'Please enter a password.', 'password_confirmation.required' => 'Please enter a confirm password.'];
+        $messages = ['email.required' => 'Please enter a email.', 'password.required' => 'Please enter a password.', 'password_confirmation.required' => 'Please enter a confirm password.'];
 
         // perform validation
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -47,17 +48,17 @@ class ResetPasswordController extends Controller
 
 //        $auth = $request->header('token') ;
 //
-        $otp2= $this->otp->validate($request->email,$request->otp);
-
-        if(! $otp2->status){
-
-            $this->data = ['status_code' => 200, 'code' => 100401, 'response' => '',
-                "success" => [$otp2->message],
-                'data' => []
-            ];
-            $this->setResponse($this->data);
-            return $this->getResponse();
-        }
+//        $otp2= $this->otp->validate($request->email,$request->otp);
+//
+//        if(! $otp2->status){
+//
+//            $this->data = ['status_code' => 200, 'code' => 100401, 'response' => '',
+//                "success" => [$otp2->message],
+//                'data' => []
+//            ];
+//            $this->setResponse($this->data);
+//            return $this->getResponse();
+//        }
 
         $user = User::where('email',$request->email)->first();
 

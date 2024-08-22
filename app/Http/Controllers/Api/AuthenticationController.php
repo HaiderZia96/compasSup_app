@@ -38,10 +38,10 @@ class AuthenticationController extends Controller
 //        ]);
 
         // validation rules
-        $rules = ['name' => ['required', 'string', 'max:255'],'surname' => ['required', 'string', 'max:255'],'high_school' => ['required', 'string'],'postal_code' => ['required', 'string'],'date_of_birth' => ['required', 'date_format:Y-m-d'], 'mobile_number' => ['required', 'regex:/^\+\d{1,3}\d{6,14}$/'], 'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],'password' => ['required', 'confirmed', Rules\Password::defaults()],'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:2048']];
+        $rules = ['name' => ['required', 'string', 'max:255'],'surname' => ['required', 'string', 'max:255'],'high_school' => ['required', 'string'],'postal_code' => ['required', 'string'],'date_of_birth' => ['required', 'date_format:Y-m-d'], 'country_code' => ['required', 'regex:/^\+\d{1,3}$/'],'mobile_number' => ['required', 'numeric'], 'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],'password' => ['required', 'confirmed', Rules\Password::defaults()],'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:2048']];
 
         // validation messages
-        $messages = ['name.required' => 'Please enter name.','surname.required' => 'Please enter surname.','high_school.required' => 'Please enter high school.','postal_code.required' => 'Please enter postal code.','date_of_birth.required' => 'Please enter date of birth.','mobile_number.required' => 'Please enter mobile number.','email.required' => 'Please enter a email.', 'email.unique' => 'A user with this email already exists.','password.required' => 'Please enter a password.','image.required' => 'Please upload a image.'];
+        $messages = ['name.required' => 'Please enter name.','surname.required' => 'Please enter surname.','high_school.required' => 'Please enter high school.','postal_code.required' => 'Please enter postal code.','date_of_birth.required' => 'Please enter date of birth.','country_code.required' => 'Please enter country code.','regex' => 'The country code must start with a "+" followed by 1 to 3 digits.','mobile_number.required' => 'Please enter mobile number.','email.required' => 'Please enter a email.', 'email.unique' => 'A user with this email already exists.','password.required' => 'Please enter a password.','image.required' => 'Please upload a image.'];
 
         // perform validation
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -111,7 +111,7 @@ class AuthenticationController extends Controller
             'date_of_birth' => $request->date_of_birth,
             'high_school' => $request->high_school,
             'postal_code' => $request->postal_code,
-            'mobile_number' => $request->mobile_number,
+            'mobile_number' => $request->country_code.$request->mobile_number,
             'image' => $uploadedImageResponse['url'],
             'email' => $request->email,
             'password' => Hash::make($request->password),
@@ -297,30 +297,30 @@ class AuthenticationController extends Controller
     public function logout(Request $request)
     {
 
-        $userEmail = trim($request->email);
+//        $userEmail = trim($request->email);
+//
+//        if (empty($userEmail)) {
+//            $this->data = ['status_code' => 200, 'code' => 100401, 'response' => '',
+//                "success" => ["Logged in user email required."],
+//                'data' => []
+//            ];
+//            $this->setResponse($this->data);
+//            return $this->getResponse();
+//        }
 
-        if (empty($userEmail)) {
-            $this->data = ['status_code' => 200, 'code' => 100401, 'response' => '',
-                "success" => ["Logged in user email required."],
-                'data' => []
-            ];
-            $this->setResponse($this->data);
-            return $this->getResponse();
-        }
-
-        $user = User::where('email', $userEmail)->first();
-
-        //  User not exist
-        if (empty($user)) {
-            $this->data = ['status_code' => 200, 'code' => 100401, 'response' => '',
-                "success" => ["User is not logged in."],
-                'data' => [
-                ]
-            ];
-            $this->setResponse($this->data);
-            return $this->getResponse();
-        }
-
+//        $user = User::where('email', $userEmail)->first();
+//
+//        //  User not exist
+//        if (empty($user)) {
+//            $this->data = ['status_code' => 200, 'code' => 100401, 'response' => '',
+//                "success" => ["User is not logged in."],
+//                'data' => [
+//                ]
+//            ];
+//            $this->setResponse($this->data);
+//            return $this->getResponse();
+//        }
+        $user = Auth::user();
         //  Clear Auth token
         $auth_token = null;
         $user->m_login_token = $auth_token;
@@ -330,7 +330,7 @@ class AuthenticationController extends Controller
         $user->tokens()->delete();
 
         // Logout Successful
-        $this->data = ['status_code' => 200, 'code' => 100200, 'response' => '', "success" => ["Logout Successfully."], 'data' => ['email' => $userEmail]];
+        $this->data = ['status_code' => 200, 'code' => 100200, 'response' => '', "success" => ["User logout Successfully."], 'data' => []];
         $this->setResponse($this->data);
         return $this->getResponse();
     }

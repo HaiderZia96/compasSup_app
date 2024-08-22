@@ -87,6 +87,7 @@ class ProfileController extends Controller
             'high_school' => ['required', 'string'],
             'postal_code' => ['required', 'string'],
             'date_of_birth' => ['required', 'date_format:Y-m-d'],
+            'country_code' => ['required', 'regex:/^\+\d{1,3}$/'],
             'mobile_number' => ['required', 'int'],
 //            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
@@ -100,6 +101,8 @@ class ProfileController extends Controller
             'high_school.required' => 'Please enter high school.',
             'postal_code.required' => 'Please enter postal code.',
             'date_of_birth.required' => 'Please enter date of birth.',
+            'country_code.required' => 'Please enter country code.',
+            'regex' => 'The country code must start with a "+" followed by 1 to 3 digits.',
             'mobile_number.required' => 'Please enter mobile number.',
             'password.required' => 'Please enter a password.',
             'image.required' => 'Please upload a valid image.',
@@ -192,7 +195,7 @@ class ProfileController extends Controller
         $user->high_school = $request->high_school;
         $user->date_of_birth = $request->date_of_birth;
         $user->postal_code = $request->postal_code;
-        $user->mobile_number = $request->mobile_number;
+        $user->mobile_number = $request->country_code.$request->mobile_number;
 
 
         if ($request->password) {

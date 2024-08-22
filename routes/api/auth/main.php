@@ -20,12 +20,13 @@ Route::group(['prefix' => 'auth', 'middleware' => ['checkAppAuth']], function ()
 
     Route::post('/signup', [AuthenticationController::class, 'signUp']);
     Route::post('/login', [AuthenticationController::class, 'login']);
-    Route::post('/logout', [AuthenticationController::class, 'logout']);
+
 
     Route::post('password/forgot',[ForgotPasswordController::class,'forgotPassword']);
     Route::post('verify/otp',[VerifyOtpController::class,'verifyOTP']);
     Route::post('password/reset',[ResetPasswordController::class,'resetPassword']);
 });
-
-
+Route::group(['prefix' => 'auth', 'middleware' => ['auth:sanctum']], function () {
+    Route::post('/logout', [AuthenticationController::class, 'logout']);
+});
 
