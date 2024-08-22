@@ -23,9 +23,9 @@ class Program extends Model
         'schooling_pursuit',
         'description_of_the_formation',
         'number_of_students',
-        'keywords_option',
-        'keywords_secondary',
-        'keywords_main',
+        'keyword_option_one',
+        'keyword_secondary_one',
+        'keyword_main_one',
         'created_by',
         'updated_by',
     ];

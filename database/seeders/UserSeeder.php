@@ -20,8 +20,12 @@ class UserSeeder extends Seeder
 //        url(Storage::url('users/user_avatar_default.png'))
         $users = [
             [
-                'first_name' => 'Admin',
-                'last_name' => 'User',
+                'name' => 'Admin',
+                'surname' => 'User',
+                'date_of_birth' => '1970-01-01',
+                'high_school' => '-',
+                'mobile_number' => '-',
+                'postal_code' => '-',
                 'image' => asset('users/user_avatar.png'),
                 'email' => 'admin@admin.com',
                 'password'=>bcrypt('11112222#'),

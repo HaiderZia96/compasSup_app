@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 
 class AuthenticationController extends Controller
@@ -37,10 +38,10 @@ class AuthenticationController extends Controller
 //        ]);
 
         // validation rules
-        $rules = ['first_name' => ['required', 'string', 'max:255'],'last_name' => ['required', 'string', 'max:255'],'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],'password' => ['required', 'confirmed', Rules\Password::defaults()],'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],];
+        $rules = ['name' => ['required', 'string', 'max:255'],'surname' => ['required', 'string', 'max:255'],'high_school' => ['required', 'string'],'postal_code' => ['required', 'string'],'date_of_birth' => ['required', 'date_format:Y-m-d'], 'mobile_number' => ['required', 'int'], 'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],'password' => ['required', 'confirmed', Rules\Password::defaults()],'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048']];
 
         // validation messages
-        $messages = ['first_name.required' => 'Please enter first name.','last_name.required' => 'Please enter last name.','email.required' => 'Please enter a email.', 'email.unique' => 'A user with this email already exists.','password.required' => 'Please enter a password.','image.required' => 'Please upload a image.'];
+        $messages = ['name.required' => 'Please enter name.','surname.required' => 'Please enter surname.','high_school.required' => 'Please enter high school.','postal_code.required' => 'Please enter postal code.','date_of_birth.required' => 'Please enter date of birth.','mobile_number.required' => 'Please enter mobile number.','email.required' => 'Please enter a email.', 'email.unique' => 'A user with this email already exists.','password.required' => 'Please enter a password.','image.required' => 'Please upload a image.'];
 
         // perform validation
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -61,13 +62,19 @@ class AuthenticationController extends Controller
 
         $image = $request->file('image'); // Ensure you get the uploaded file
 
-        // Get the original file name with extension
-        $imageName = $image->getClientOriginalName();
+        // Get the original file name without the extension
+        $originalName = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME);
+
+        // Get the file extension
+        $extension = $image->getClientOriginalExtension();
+
+        // Slugify the file name
+        $slugifiedName = Str::slug($originalName) . '.' . $extension;
 
         // Store the image in the 'public' disk, which maps to 'storage/app/public' directory
-        $image_uploaded_path = $image->storeAs('users', $imageName);
+        $image_uploaded_path = $image->storeAs('users', $slugifiedName, 'public');
 
-        // complete URL including the base URL
+        // Complete URL including the base URL
         $image_url = url(Storage::url($image_uploaded_path));
 
 
@@ -91,14 +98,18 @@ class AuthenticationController extends Controller
         // dd($image_url);
 
         $uploadedImageResponse = array(
-            "name" => basename($image_uploaded_path),
+//            "name" => basename($image_uploaded_path),
             "url" => $image_url,
-            "type" => $image->getMimeType()
+//            "type" => $image->getMimeType()
         );
 
         $user = User::create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
+            'name' => $request->name,
+            'surname' => $request->surname,
+            'date_of_birth' => $request->date_of_birth,
+            'high_school' => $request->high_school,
+            'postal_code' => $request->postal_code,
+            'mobile_number' => $request->mobile_number,
             'image' => $uploadedImageResponse['url'],
             'email' => $request->email,
             'password' => Hash::make($request->password),
@@ -114,8 +125,12 @@ class AuthenticationController extends Controller
             "success" =>["User sign-up successfully."],
             'data' => [
                 'id' => $user->id,
-                'first_name' => $user->first_name,
-                'last_name' => $user->last_name,
+                'name' => $user->name,
+                'surname' => $user->surname,
+                'date_of_birth' => $user->date_of_birth,
+                'high_school' => $user->high_school,
+                'postal_code' => $user->postal_code,
+                'mobile_number' => $user->mobile_number,
                 'email' => $user->email,
                 'created_at' => $user->created_at,
                 'image' => $uploadedImageResponse,
@@ -248,10 +263,14 @@ class AuthenticationController extends Controller
                 "auth_token" => $auth_token,
                 'data' =>
                     [
-                        "id" => $user->id,
-                        "first_name" => $user->first_name,
-                        "last_name" => $user->last_name,
-                        "email" => $user->email,
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'surname' => $user->surname,
+                        'date_of_birth' => $user->date_of_birth,
+                        'high_school' => $user->high_school,
+                        'postal_code' => $user->postal_code,
+                        'mobile_number' => $user->mobile_number,
+                        'email' => $user->email,
                         'image' => [
                             'url' => $avatarUrl,
                             // mime_type

@@ -17,4 +17,5 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'user', 'middleware' => ['auth:sanctum']], function () {
     Route::post('change-password', [ProfileController::class, 'changePassword']);
+    Route::post('profile/edit', [ProfileController::class, 'editProfile']);
 });

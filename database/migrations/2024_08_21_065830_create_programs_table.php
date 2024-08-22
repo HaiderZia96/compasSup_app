@@ -27,9 +27,9 @@ return new class extends Migration
             $table->string('schooling_pursuit')->nullable();
             $table->string('description_of_the_formation')->nullable();
             $table->integer('number_of_students')->nullable();
-            $table->string('keywords_option')->nullable();
-            $table->string('keywords_secondary')->nullable();
-            $table->string('keywords_main')->nullable();
+            $table->string('keyword_option_one')->nullable();
+            $table->string('keyword_secondary_one')->nullable();
+            $table->string('keyword_main_one')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
