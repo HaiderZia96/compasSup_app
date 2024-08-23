@@ -39,6 +39,7 @@ class BasketController extends Controller
         $basket = Basket::select('baskets.*','programs.id as program_id','programs.formation_id','programs.name_of_the_formation','programs.link_to_its_webpage as link'
             ,'programs.region','programs.schooling_cost','programs.length_of_the_formation as length','programs.access_rate','programs.town','programs.type_of_formation as program_type','programs.number_of_students')
             ->leftJoin('programs', 'programs.id', '=', 'baskets.program_id')
+            ->orderBy('baskets.type','asc')
             ->paginate($perPage);
 
 
