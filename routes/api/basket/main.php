@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::group(['prefix' => 'compas-sup-app', 'middleware' => ['auth:sanctum']], function () {
+Route::group(['prefix' => 'compas-sup-app', 'middleware' => ['checkAuthToken']], function () {
     Route::get('get-basket', [BasketController::class, 'index']);
     Route::post('basket/add', [BasketController::class, 'create']);
     Route::post('basket/remove', [BasketController::class, 'destroy']);

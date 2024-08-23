@@ -96,7 +96,7 @@ class BasketController extends Controller
                 'total' => 0,
 
             ];
-            $this->data = ['status_code' => 200, 'code' => 100402, 'response' => '', 'success' => ['No baskets found.'], 'data' => $data];
+            $this->data = ['status_code' => 200, 'code' => 100200, 'response' => '', 'success' => ['No baskets found.'], 'data' => $data];
             $this->setResponse($this->data);
             return $this->getResponse();
         }
@@ -142,10 +142,10 @@ class BasketController extends Controller
 
         if (isset($basket_create)) {
 
-            $data['updated_by'] = Auth::id();
+            $data['updated_by'] = auth('sanctum')->id();
         } else {
 
-            $data['created_by'] = Auth::id();
+            $data['created_by'] = auth('sanctum')->id();
         }
 
 
@@ -446,7 +446,7 @@ class BasketController extends Controller
 
         // update the task status
         $data['type'] = $request->formation_type;
-        $data['updated_by'] = Auth::id(); // authenticated user
+        $data['updated_by'] = auth('sanctum')->id();// authenticated user
 
         $unchecked = '0';
         // find the baskets to update

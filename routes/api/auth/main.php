@@ -26,7 +26,8 @@ Route::group(['prefix' => 'auth', 'middleware' => ['checkAppAuth']], function ()
     Route::post('verify/otp',[VerifyOtpController::class,'verifyOTP']);
     Route::post('password/reset',[ResetPasswordController::class,'resetPassword']);
 });
-Route::group(['prefix' => 'auth', 'middleware' => ['auth:sanctum']], function () {
+
+Route::group(['prefix' => 'auth', 'middleware' => ['checkAuthToken']], function () {
     Route::post('/logout', [AuthenticationController::class, 'logout']);
 });
 

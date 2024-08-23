@@ -296,6 +296,7 @@ class AuthenticationController extends Controller
 
     public function logout(Request $request)
     {
+        $user = auth('sanctum')->user();
 
 //        $userEmail = trim($request->email);
 //
@@ -310,7 +311,9 @@ class AuthenticationController extends Controller
 
 //        $user = User::where('email', $userEmail)->first();
 //
-//        //  User not exist
+
+
+        //        //  User not exist
 //        if (empty($user)) {
 //            $this->data = ['status_code' => 200, 'code' => 100401, 'response' => '',
 //                "success" => ["User is not logged in."],
@@ -320,7 +323,6 @@ class AuthenticationController extends Controller
 //            $this->setResponse($this->data);
 //            return $this->getResponse();
 //        }
-        $user = Auth::user();
         //  Clear Auth token
         $auth_token = null;
         $user->m_login_token = $auth_token;

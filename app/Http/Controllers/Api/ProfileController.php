@@ -45,7 +45,7 @@ class ProfileController extends Controller
             $this->setResponse($this->data);
             return $this->getResponse();
         }
-        $auth_user = Auth::user();
+        $auth_user = auth('sanctum')->user();
         $oldPass = $request->get("old_password");
         if (Hash::check($oldPass, $auth_user->password) !== true) {
             $this->data = ['status_code' => 200, 'code' => 100401, 'response' => '',
@@ -79,7 +79,7 @@ class ProfileController extends Controller
 
     public function editProfile(Request $request)
     {
-        $user = Auth::user();
+        $user = auth('sanctum')->user();
         // Validation rules
         $rules = [
             'name' => ['required', 'string', 'max:255'],

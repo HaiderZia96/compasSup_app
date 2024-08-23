@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::group(['prefix' => 'compas-sup-app', 'middleware' => ['auth:sanctum']], function () {
+Route::group(['prefix' => 'compas-sup-app', 'middleware' => ['checkAuthToken']], function () {
     Route::get('get-program', [ProgramController::class, 'index']);
     Route::get('program/{id}/get', [ProgramController::class, 'programById']);
 });
