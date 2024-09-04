@@ -165,10 +165,10 @@ class ProgramController extends Controller
                     $data = array_combine($header, $row);
 
                     // Ensure the 'id' field exists in the data
-                    if (isset($data['id'])) {
-                        // Find the record in the database and update it, or create a new one
+                    if (isset($data['formation_id'])) {
+
                         Program::updateOrCreate(
-                            ['formation_id' => $data['formation_id']],  // Use 'id' as the unique identifier
+                            ['formation_id' => $data['formation_id']],
                             [
                                 'formation_id' => $data['formation_id'],
                                 'name_of_the_formation' => $data['name_of_the_formation'],

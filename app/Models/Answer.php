@@ -12,7 +12,6 @@ class Answer extends Model
     protected $fillable = [
         'option',
         'question_id',
-        'sub_question_id',
         'status',
         'created_by',
         'updated_by'

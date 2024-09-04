@@ -296,7 +296,7 @@ class AuthenticationController extends Controller
                 'filliere_de_formation'
             ];
 
-           // Initialize the survey variable
+            // Initialize the survey variable
             $user_survey = 0;
 
             // Check if any field is not null
@@ -329,27 +329,27 @@ class AuthenticationController extends Controller
 //                            'type' => $mimeType,
                         ],
                         'complete_profile' => [
-                //Complete Profile Detail
-                'type_of_baccalaureate' => $user->type_of_baccalaureate,
-                'specialities' => $user->specialities,
-                'european_section' => $user->european_section,
-                'options' => $user->options,
-                'iapprentissage' => $user->iapprentissage,
-                'general_mean' => $user->general_mean,
-                'subject_id' => $user->subject_id,
-                'learning_a_language' => $user->learning_a_language,
-                'language' => $user->language,
-                'international_experience' => $user->international_experience,
-                'traveling_to_a_peculiar_region' => $user->traveling_to_a_peculiar_region,
-                'region' => $user->region,
-                'prefer_school' => $user->prefer_school,
-                'study' => $user->study,
-                'minimum_monthly_cost' => $user->minimum_monthly_cost,
-                'pay_for_your_studies' => $user->pay_for_your_studies,
-                'professionalizing_formation' => $user->professionalizing_formation,
-                'study_online' => $user->study_online,
-                'filliere_de_formation' => $user->filliere_de_formation
-            ],
+                            //Complete Profile Detail
+                            'type_of_baccalaureate' => $user->type_of_baccalaureate,
+                            'specialities' => $user->specialities,
+                            'european_section' => $user->european_section,
+                            'options' => $user->options,
+                            'iapprentissage' => $user->iapprentissage,
+                            'general_mean' => $user->general_mean,
+                            'subject_id' => $user->subject_id,
+                            'learning_a_language' => $user->learning_a_language,
+                            'language' => $user->language,
+                            'international_experience' => $user->international_experience,
+                            'traveling_to_a_peculiar_region' => $user->traveling_to_a_peculiar_region,
+                            'region' => $user->region,
+                            'prefer_school' => $user->prefer_school,
+                            'study' => $user->study,
+                            'minimum_monthly_cost' => $user->minimum_monthly_cost,
+                            'pay_for_your_studies' => $user->pay_for_your_studies,
+                            'professionalizing_formation' => $user->professionalizing_formation,
+                            'study_online' => $user->study_online,
+                            'filliere_de_formation' => $user->filliere_de_formation
+                        ],
                         "user_survey" => $user_survey,
                         "last_login" => $user->last_login
 

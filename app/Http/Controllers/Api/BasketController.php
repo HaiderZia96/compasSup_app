@@ -39,7 +39,6 @@ class BasketController extends Controller
         $basket = Basket::select('baskets.*','programs.id as program_id','programs.formation_id','programs.name_of_the_formation','programs.link_to_its_webpage as link'
             ,'programs.region','programs.schooling_cost','programs.length_of_the_formation as length','programs.access_rate','programs.town','programs.type_of_formation as program_type','programs.number_of_students')
             ->leftJoin('programs', 'programs.id', '=', 'baskets.program_id')
-            ->orderBy('baskets.id','desc')
             ->where('baskets.created_by',auth('sanctum')->id())
             ->paginate($perPage);
 
@@ -173,26 +172,26 @@ class BasketController extends Controller
 
         // prepare response
         $this->data = ['status_code' => 200, 'code' => 100200, 'response' => '', 'success' => ['Program added to basket successfully.'], 'data' =>
-        [
-            "id"=>  $basket->id,
-            "basket_type"=>  $basket->type,
-            "program_id"=>  $basket->program_id,
+            [
+                "id"=>  $basket->id,
+                "basket_type"=>  $basket->type,
+                "program_id"=>  $basket->program_id,
 
-            "formation_id"=>  $basket->formation_id,
-            "name_of_the_formation"=>  $basket->name_of_the_formation,
-            "link_to_its_webpage"=>  $basket->link,
-            "region"=>  $basket->region,
-            "status"=>  $basket->status,
-            "access_rate"=>  $basket->access_rate,
-            "type_of_formation"=>  $basket->program_type,
-            "town"=>  $basket->town,
-            "number_of_students"=>  $basket->number_of_students,
+                "formation_id"=>  $basket->formation_id,
+                "name_of_the_formation"=>  $basket->name_of_the_formation,
+                "link_to_its_webpage"=>  $basket->link,
+                "region"=>  $basket->region,
+                "status"=>  $basket->status,
+                "access_rate"=>  $basket->access_rate,
+                "type_of_formation"=>  $basket->program_type,
+                "town"=>  $basket->town,
+                "number_of_students"=>  $basket->number_of_students,
 
-            "created_by"=>  $basket->created_by,
-            "updated_by"=>  $basket->updated_by,
-            "created_at"=>  $basket->created_at,
-            "updated_at"=>  $basket->updated_at,
-        ]
+                "created_by"=>  $basket->created_by,
+                "updated_by"=>  $basket->updated_by,
+                "created_at"=>  $basket->created_at,
+                "updated_at"=>  $basket->updated_at,
+            ]
 //            $bas
         ];
         $this->setResponse($this->data);
@@ -258,26 +257,26 @@ class BasketController extends Controller
 
         // prepare response
         $this->data = ['status_code' => 200, 'code' => 100200, 'response' => '', 'success' => ['Program remove from the basket.'], 'data' =>
-        [
-            "id"=>  $basket->id,
-            "basket_type"=>  $basket->type,
-            "program_id"=>  $basket->program_id,
+            [
+                "id"=>  $basket->id,
+                "basket_type"=>  $basket->type,
+                "program_id"=>  $basket->program_id,
 
-            "formation_id"=>  $basket->formation_id,
-            "name_of_the_formation"=>  $basket->name_of_the_formation,
-            "link_to_its_webpage"=>  $basket->link,
-            "region"=>  $basket->region,
-            "status"=>  $basket->status,
-            "access_rate"=>  $basket->access_rate,
-            "type_of_formation"=>  $basket->program_type,
-            "town"=>  $basket->town,
-            "number_of_students"=>  $basket->number_of_students,
+                "formation_id"=>  $basket->formation_id,
+                "name_of_the_formation"=>  $basket->name_of_the_formation,
+                "link_to_its_webpage"=>  $basket->link,
+                "region"=>  $basket->region,
+                "status"=>  $basket->status,
+                "access_rate"=>  $basket->access_rate,
+                "type_of_formation"=>  $basket->program_type,
+                "town"=>  $basket->town,
+                "number_of_students"=>  $basket->number_of_students,
 
-            "created_by"=>  $basket->created_by,
-            "updated_by"=>  $basket->updated_by,
-            "created_at"=>  $basket->created_at,
-            "updated_at"=>  $basket->updated_at,
-        ]
+                "created_by"=>  $basket->created_by,
+                "updated_by"=>  $basket->updated_by,
+                "created_at"=>  $basket->created_at,
+                "updated_at"=>  $basket->updated_at,
+            ]
         ];
         $this->setResponse($this->data);
         return $this->getResponse();

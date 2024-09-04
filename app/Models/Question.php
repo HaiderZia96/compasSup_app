@@ -13,8 +13,8 @@ class Question extends Model
         'possible_answer',
         'status',
         'min_answer_count',
-        'travelling',
-        'language',
+        'answer_key',
+        'main_question_id',
         'created_by',
         'updated_by'
     ];

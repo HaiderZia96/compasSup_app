@@ -245,7 +245,7 @@ class QuestionController extends Controller
 //    }
 
 
-        public function index(Request $request)
+    public function index(Request $request)
     {
         // Start with the base query for questions
         $questionQuery = Question::query();
@@ -255,7 +255,7 @@ class QuestionController extends Controller
             $question_id = $request->get('question_id');
             $answerType = $request->get('answer');
             $questionQuery->where('id', $question_id)
-            ->orWhere('type_of_baccalaureate', $answerType)
+                ->orWhere('type_of_baccalaureate', $answerType)
             ;
 //            dd('123');
             if($question_id == 4 || $question_id == 11 || $question_id == 17 || $question_id == 19 || $question_id == 20 && $answerType == 'Yes'){
@@ -289,15 +289,15 @@ class QuestionController extends Controller
                 ->orderBy('id', 'asc')
                 ->get();
         }else{
-        $questionQuery->where('id', '<>', 3)
-        ->where('id', '<>', 4)->where('id', '<>', 5)->where('id', '<>', 6)
-            ->where('id', '<>', 10)->where('id', '<>', 13);
+            $questionQuery->where('id', '<>', 3)
+                ->where('id', '<>', 4)->where('id', '<>', 5)->where('id', '<>', 6)
+                ->where('id', '<>', 10)->where('id', '<>', 13);
             $ques = $questionQuery->with(['answers' => function ($query) {
                 $query->select('id', 'option', 'question_id');
             }])
                 ->orderBy('id', 'asc')
                 ->get();
-    }
+        }
 
         // Check if 'answer' is present
 //        if ($request->has('answer') && $request->get('answer') !== null) {

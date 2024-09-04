@@ -52,7 +52,7 @@ class ProgramController extends Controller
         if ($request->has('keywords') && $request->get('keywords') !== null) {
             $keyword = $request->get('keywords');
             $programQuery->where('link_to_its_webpage', 'LIKE', "%$keyword%")
-            ->orWhere('formation_id', 'LIKE', "%$keyword%")
+                ->orWhere('formation_id', 'LIKE', "%$keyword%")
                 ->orWhere('region', 'LIKE', "%$keyword%")
                 ->orWhere('schooling_cost', 'LIKE', "%$keyword%")
                 ->orWhere('length_of_the_formation', 'LIKE', "%$keyword%")
@@ -72,7 +72,7 @@ class ProgramController extends Controller
         if ($program->isNotEmpty()) {
             $data =
 //                []
-            $program;
+                $program;
 //                'current_page' => $program->currentPage(),
 //                'data' => $program->items(),
 //                'first_page_url' => $program->url(1),

@@ -25,11 +25,13 @@ class ProfileController extends Controller
 
     public $data;
     public $dataArray = [];
-    public function changePassword(Request $request){
+
+    public function changePassword(Request $request)
+    {
 
         // validation rules
-        $rules = ['old_password'=>['required', 'string', 'min:8'],
-            'password' => ['required', 'string', 'min:6', 'confirmed'],'password_confirmation' => ['required', 'string', 'min:6']];
+        $rules = ['old_password' => ['required', 'string', 'min:8'],
+            'password' => ['required', 'string', 'min:6', 'confirmed'], 'password_confirmation' => ['required', 'string', 'min:6']];
 
         // validation messages
         $messages = ['old_password.required' => 'Please enter a old password.', 'password.required' => 'Please enter a password.', 'password_confirmation.required' => 'Please enter a confirm password.'];
@@ -63,11 +65,11 @@ class ProfileController extends Controller
             return $this->getResponse();
         }
 
-        $user = User::where('email',$auth_user->email)->first();
+        $user = User::where('email', $auth_user->email)->first();
 
         $user->update(
             [
-                'password'=>Hash::make($request->password)
+                'password' => Hash::make($request->password)
             ]
         );
         $user->tokens()->delete();
@@ -134,8 +136,6 @@ class ProfileController extends Controller
         }
 
 
-
-
         // Find the user to update
         $user = User::find($user->id);
 
@@ -148,7 +148,7 @@ class ProfileController extends Controller
                 'data' => []
             ], 404);
         }
-        if($request->hasFile('image')) {
+        if ($request->hasFile('image')) {
             $image = $request->file('image'); // Ensure you get the uploaded file
 
             // Get the original file name without the extension
@@ -173,8 +173,7 @@ class ProfileController extends Controller
                 "url" => $image_url,
 //                "type" => $image->getMimeType()
             ];
-        }
-        else{
+        } else {
             $uploadedImageResponse = [
 //                "name" => basename($image_uploaded_path),
                 "url" => $user->image,
@@ -305,7 +304,7 @@ class ProfileController extends Controller
             return $this->getResponse();
         }
 
-        if($request->input('type_of_baccalaureate') == 'General'){
+        if ($request->input('type_of_baccalaureate') == 'General') {
             $rules = [
                 'specialities' => ['required', 'string'],
                 'european_section' => ['required', 'string'],
@@ -336,7 +335,7 @@ class ProfileController extends Controller
             }
         }
 
-        if($request->input('type_of_baccalaureate') == 'Technologique'){
+        if ($request->input('type_of_baccalaureate') == 'Technologique') {
             $rules = [
                 'filliere_de_formation' => ['required', 'string'],
             ];
@@ -393,7 +392,7 @@ class ProfileController extends Controller
             return $this->getResponse();
         }
 
-        if($request->input('learning_a_language') == 'Yes'){
+        if ($request->input('learning_a_language') == 'Yes') {
             $rules = [
                 'language' => ['required', 'string'],
             ];
@@ -447,7 +446,7 @@ class ProfileController extends Controller
             return $this->getResponse();
         }
 
-        if($request->input('traveling_to_a_peculiar_region') == 'Yes'){
+        if ($request->input('traveling_to_a_peculiar_region') == 'Yes') {
             $rules = [
                 'region' => ['required', 'string'],
             ];
@@ -517,8 +516,6 @@ class ProfileController extends Controller
         }
 
 
-
-
         // Find the user to update
         $user = User::find($user->id);
 
@@ -531,7 +528,6 @@ class ProfileController extends Controller
                 'data' => []
             ], 404);
         }
-
 
 
         // Update/complete user details
@@ -555,8 +551,6 @@ class ProfileController extends Controller
         $user->study_online = $request->study_online;
 
 
-
-
         // Save the updated user
         $user->save();
 
@@ -567,24 +561,24 @@ class ProfileController extends Controller
             'response' => '',
             "success" => ["Profile completed successfully."],
             'data' => [
-            'type_of_baccalaureate' => $user->type_of_baccalaureate,
-            'specialities' => $user->specialities,
-            'european_section' => $user->european_section,
-            'options' => $user->options,
-            'general_mean' => $user->general_mean,
-            'subject_id' => $user->subject_id,
-            'learning_a_language' => $user->learning_a_language,
-            'language' => $user->language,
-            'international_experience' => $user->international_experience,
-            'traveling_to_a_peculiar_region' => $user->traveling_to_a_peculiar_region,
-            'region' => $user->region,
-            'prefer_school' => $user->prefer_school,
-            'study' => $user->study,
-            'minimum_monthly_cost' => $user->minimum_monthly_cost,
-            'pay_for_your_studies' => $user->pay_for_your_studies,
-            'professionalizing_formation' => $user->professionalizing_formation,
-            'study_online' => $user->study_online,
-            'iapprentissage' => $user->iapprentissage,
+                'type_of_baccalaureate' => $user->type_of_baccalaureate,
+                'specialities' => $user->specialities,
+                'european_section' => $user->european_section,
+                'options' => $user->options,
+                'general_mean' => $user->general_mean,
+                'subject_id' => $user->subject_id,
+                'learning_a_language' => $user->learning_a_language,
+                'language' => $user->language,
+                'international_experience' => $user->international_experience,
+                'traveling_to_a_peculiar_region' => $user->traveling_to_a_peculiar_region,
+                'region' => $user->region,
+                'prefer_school' => $user->prefer_school,
+                'study' => $user->study,
+                'minimum_monthly_cost' => $user->minimum_monthly_cost,
+                'pay_for_your_studies' => $user->pay_for_your_studies,
+                'professionalizing_formation' => $user->professionalizing_formation,
+                'study_online' => $user->study_online,
+                'iapprentissage' => $user->iapprentissage,
             ]
         ];
 
@@ -709,19 +703,18 @@ class ProfileController extends Controller
         $auth_token = $request->bearerToken();
         $user = auth('sanctum')->user();
 
-        $basket = Basket::select('*')->where('created_by','=',$user->id)->count();
-        $program_seen =  UserProgramView::select('*')->where('user_id','=',$user->id)->count();
-        $applied_program =  UserProgramApplication::select('*')->where('user_id','=',$user->id)->count();
+        $basket = Basket::select('*')->where('created_by', '=', $user->id)->count();
+        $program_seen = UserProgramView::select('*')->where('user_id', '=', $user->id)->count();
+        $applied_program = UserProgramApplication::select('*')->where('user_id', '=', $user->id)->count();
 
 
         if ($request->has('per_page') && $request->get('per_page') !== null) {
 
             $perPage = $request->get('per_page');
-        }else{
+        } else {
 
-            $perPage = "7" ;
+            $perPage = "7";
         }
-
 
 
 //        $applied_program_data =  UserProgramApplication::select('user_program_applications.program_id','programs.formation_id','programs.name_of_the_formation','programs.link_to_its_webpage','programs.region','programs.town','user_program_applications.created_at')->leftJoin('programs','user_program_applications.program_id','=','programs.id')->where('user_program_applications.user_id','=',$user->id)->orderBy('user_program_applications.id','desc')->paginate($perPage);
@@ -832,6 +825,4 @@ class ProfileController extends Controller
         return $this->getResponse();
 
     }
-
-
 }
