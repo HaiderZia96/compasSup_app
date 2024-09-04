@@ -38,10 +38,11 @@ class AuthenticationController extends Controller
 //        ]);
 
         // validation rules
-        $rules = ['name' => ['required', 'string', 'max:255'],'surname' => ['required', 'string', 'max:255'],'high_school' => ['required', 'string'],'postal_code' => ['required', 'string'],'date_of_birth' => ['required', 'date_format:Y-m-d'], 'country_code' => ['required', 'regex:/^\+\d{1,3}$/'],'mobile_number' => ['required', 'numeric'], 'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],'password' => ['required', 'confirmed', Rules\Password::defaults()],'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:2048']];
+        $rules = ['name' => ['required', 'string', 'max:255'],'surname' => ['required', 'string', 'max:255'],'high_school' => ['required', 'string'],'postal_code' => ['required', 'numeric', 'regex:/^\d{4,}$/'],
+            'date_of_birth' => ['required', 'date_format:Y-m-d'], 'country_code' => ['required', 'regex:/^\+\d{1,3}$/'],'mobile_number' => ['required', 'numeric'], 'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],'password' => ['required', 'confirmed', Rules\Password::defaults()]];
 
         // validation messages
-        $messages = ['name.required' => 'Please enter name.','surname.required' => 'Please enter surname.','high_school.required' => 'Please enter high school.','postal_code.required' => 'Please enter postal code.','date_of_birth.required' => 'Please enter date of birth.','country_code.required' => 'Please enter country code.','regex' => 'The country code must start with a "+" followed by 1 to 3 digits.','mobile_number.required' => 'Please enter mobile number.','email.required' => 'Please enter a email.', 'email.unique' => 'A user with this email already exists.','password.required' => 'Please enter a password.','image.required' => 'Please upload a image.'];
+        $messages = ['name.required' => 'Please enter name.','surname.required' => 'Please enter surname.','high_school.required' => 'Please enter high school.','postal_code.required' => 'Please enter postal code.','date_of_birth.required' => 'Please enter date of birth.','country_code.required' => 'Please enter country code.','country_code.regex' => 'The country code must start with a "+" followed by 1 to 3 digits.','mobile_number.required' => 'Please enter mobile number.','email.required' => 'Please enter a email.', 'email.unique' => 'A user with this email already exists.','password.required' => 'Please enter a password.','postal_code.regex' => 'The postal code minimum of 4 digits.'];
 
         // perform validation
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -60,26 +61,30 @@ class AuthenticationController extends Controller
             return $this->getResponse();
         }
 
-        $image = $request->file('image'); // Ensure you get the uploaded file
+        if($request->hasFile('image')) {
+            $image = $request->file('image'); // Ensure you get the uploaded file
 
-        // Get the original file name without the extension
-        $originalName = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME);
+            // Get the original file name without the extension
+            $originalName = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME);
 
-        // Get the file extension
-        $extension = $image->getClientOriginalExtension();
+            // Get the file extension
+            $extension = $image->getClientOriginalExtension();
 
-        // Slugify the file name
-        $slugifiedName = Str::slug($originalName) . '.' . $extension;
+            // Slugify the file name
+            $slugifiedName = Str::slug($originalName) . '.' . $extension;
 
-        // Store the image in the 'public' disk, which maps to 'storage/app/public' directory
-        $image_uploaded_path = $image->storeAs('users', $slugifiedName , 'public');
+            // Store the image in the 'public' disk, which maps to 'storage/app/public' directory
+            $image_uploaded_path = $image->storeAs('users', $slugifiedName, 'public');
 
-        // Complete URL including the base live URL
+            // Complete URL including the base live URL
 //        $image_url = url(Storage::url($image_uploaded_path));
 
-        $modified_path = 'public/storage/' . $image_uploaded_path;
-        $image_url = url($modified_path);
-
+            $modified_path = 'public/storage/' . $image_uploaded_path;
+            $image_url = url($modified_path);
+        }
+        else{
+            $image_url = asset('users/user_avatar.png');
+        }
 //        $uploadedImageResponse = array(
 //            "name" => basename($image_uploaded_path),
 //            "url" => $image_url,
@@ -111,13 +116,23 @@ class AuthenticationController extends Controller
             'date_of_birth' => $request->date_of_birth,
             'high_school' => $request->high_school,
             'postal_code' => $request->postal_code,
-            'mobile_number' => $request->country_code.$request->mobile_number,
+            'country_code' => $request->country_code,
+            'mobile_number' => $request->mobile_number,
             'image' => $uploadedImageResponse['url'],
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'user_role' => 'NA',
             'email_verified_at'  => Carbon::now()->toDateTimeString(),
         ]);
+        $credentials = $request->all('email', 'password');
+
+        if(auth()->attempt($credentials)){
+            $user = auth()->user();
+            $user->last_login = Carbon::now();
+            $auth_token = $user->createToken("API TOKEN")->plainTextToken;
+            $user->m_login_token = $auth_token;
+            $user->save();
+        }
 
         // fetch the newly created user
         $user = User::where('email', $request->email)->first();
@@ -126,12 +141,14 @@ class AuthenticationController extends Controller
         $this->data = ['status_code' => 200, 'code' => 100200, 'response' => '',
             "success" =>["User sign-up successfully."],
             'data' => [
+                "auth_token" => $auth_token,
                 'id' => $user->id,
                 'name' => $user->name,
                 'surname' => $user->surname,
                 'date_of_birth' => $user->date_of_birth,
                 'high_school' => $user->high_school,
                 'postal_code' => $user->postal_code,
+                'country_code' => $user->country_code,
                 'mobile_number' => $user->mobile_number,
                 'email' => $user->email,
                 'created_at' => $user->created_at,
@@ -256,6 +273,39 @@ class AuthenticationController extends Controller
                 $avatarUrl = $user->image;
 //                $mimeType = File::mimeType($avatarPath);
             }
+            // List of fields to check
+            $fields = [
+                'type_of_baccalaureate',
+                'specialities',
+                'european_section',
+                'options',
+                'iapprentissage',
+                'general_mean',
+                'subject_id',
+                'learning_a_language',
+                'language',
+                'international_experience',
+                'traveling_to_a_peculiar_region',
+                'region',
+                'prefer_school',
+                'study',
+                'minimum_monthly_cost',
+                'pay_for_your_studies',
+                'professionalizing_formation',
+                'study_online',
+                'filliere_de_formation'
+            ];
+
+           // Initialize the survey variable
+            $user_survey = 0;
+
+            // Check if any field is not null
+            foreach ($fields as $field) {
+                if (!is_null($user->$field)) {
+                    $user_survey = 1;
+                    break; // Exit the loop early if any field is not null
+                }
+            }
 
             $this->data = [
                 'status_code' => 200,
@@ -278,7 +328,31 @@ class AuthenticationController extends Controller
                             // mime_type
 //                            'type' => $mimeType,
                         ],
+                        'complete_profile' => [
+                //Complete Profile Detail
+                'type_of_baccalaureate' => $user->type_of_baccalaureate,
+                'specialities' => $user->specialities,
+                'european_section' => $user->european_section,
+                'options' => $user->options,
+                'iapprentissage' => $user->iapprentissage,
+                'general_mean' => $user->general_mean,
+                'subject_id' => $user->subject_id,
+                'learning_a_language' => $user->learning_a_language,
+                'language' => $user->language,
+                'international_experience' => $user->international_experience,
+                'traveling_to_a_peculiar_region' => $user->traveling_to_a_peculiar_region,
+                'region' => $user->region,
+                'prefer_school' => $user->prefer_school,
+                'study' => $user->study,
+                'minimum_monthly_cost' => $user->minimum_monthly_cost,
+                'pay_for_your_studies' => $user->pay_for_your_studies,
+                'professionalizing_formation' => $user->professionalizing_formation,
+                'study_online' => $user->study_online,
+                'filliere_de_formation' => $user->filliere_de_formation
+            ],
+                        "user_survey" => $user_survey,
                         "last_login" => $user->last_login
+
                     ]
 
             ];
@@ -353,6 +427,8 @@ class AuthenticationController extends Controller
 
         // Base64 encode the image
         $encodedImage = base64_encode($file);
+
+
 
         $this->data = [
             'status_code' => 200,

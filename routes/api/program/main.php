@@ -18,5 +18,8 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => 'compas-sup-app', 'middleware' => ['checkAuthToken']], function () {
     Route::get('get-program', [ProgramController::class, 'index']);
     Route::get('program/{id}/get', [ProgramController::class, 'programById']);
+    Route::get('get-program-with-filters', [ProgramController::class, 'indexFilters']);
+    Route::get('program/{id}/seen', [ProgramController::class, 'programSeenById']);
+    Route::post('program/{id}/apply', [ProgramController::class, 'apply']);
 });
 

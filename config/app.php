@@ -128,6 +128,7 @@ return [
 
         Spatie\Permission\PermissionServiceProvider::class,
 
+
     ])->toArray(),
 
 ];

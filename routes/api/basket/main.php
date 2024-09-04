@@ -19,6 +19,6 @@ Route::group(['prefix' => 'compas-sup-app', 'middleware' => ['checkAuthToken']],
     Route::get('get-basket', [BasketController::class, 'index']);
     Route::post('basket/add', [BasketController::class, 'create']);
     Route::post('basket/remove', [BasketController::class, 'destroy']);
-    Route::post('basket/checked-formation', [BasketController::class, 'checkedFormation']);
+    Route::post('basket/{id}/checked-formation', [BasketController::class, 'checkedFormation']);
 
 });

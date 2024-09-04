@@ -40,6 +40,7 @@ class BasketController extends Controller
             ,'programs.region','programs.schooling_cost','programs.length_of_the_formation as length','programs.access_rate','programs.town','programs.type_of_formation as program_type','programs.number_of_students')
             ->leftJoin('programs', 'programs.id', '=', 'baskets.program_id')
             ->orderBy('baskets.id','desc')
+            ->where('baskets.created_by',auth('sanctum')->id())
             ->paginate($perPage);
 
 
@@ -108,10 +109,10 @@ class BasketController extends Controller
     {
 
         // validation rules
-        $rules = ['program_id' => 'required|int|exists:programs,id'];
+        $rules = ['program_id' => 'required|int|exists:programs,id','checked_unchecked' => 'required|in:0,1'];
 
         // validation messages
-        $messages = [ 'program_id.required' => 'Please enter a program id.'];
+        $messages = [ 'program_id.required' => 'Please enter a program id.','checked_unchecked.required' => 'Please enter a checked/unchecked status.'];
 
         // perform validation
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -130,7 +131,7 @@ class BasketController extends Controller
 
         // store data
         $data = $request->all();
-        $data['type'] = '0';
+        $data['type'] = $request->get('checked_unchecked');
 
         // fetch the newly created basket
         $basket_create = Basket::where('program_id', $request->program_id)->first();
@@ -154,6 +155,13 @@ class BasketController extends Controller
             [ 'program_id' => $data['program_id'] ],
             $data
         );
+        $data['is_fav'] = '1';
+
+        $program = Program::find($data['program_id']); // Find the program by ID
+
+        if ($program) {
+            $program->update(['is_fav' => $data['is_fav']]); // Update the 'is_fav' field
+        }
 
         // fetch the newly created basket
         $basket = Basket::select('baskets.*','programs.id as program_id','programs.formation_id','programs.name_of_the_formation','programs.link_to_its_webpage as link'
@@ -240,6 +248,13 @@ class BasketController extends Controller
             'program_id' , $data['program_id'] ,
         )->delete();
 
+        $data['is_fav'] = '0';
+
+        $program = Program::find($data['program_id']); // Find the program by ID
+
+        if ($program) {
+            $program->update(['is_fav' => $data['is_fav']]); // Update the 'is_fav' field
+        }
 
         // prepare response
         $this->data = ['status_code' => 200, 'code' => 100200, 'response' => '', 'success' => ['Program remove from the basket.'], 'data' =>
@@ -422,8 +437,17 @@ class BasketController extends Controller
 
     }
 
-    public function checkedFormation(Request $request)
+    public function checkedFormation(Request $request, string $id)
     {
+        $user = auth('sanctum')->user();
+        $program = Basket::where('program_id',$id)->first();
+
+        if (!$program) {
+            // program not found
+            $this->data = ['status_code' => 200, 'code' => 100402, 'response' => '', 'success' => ['Program not found in basket.'], 'data' => []];
+            $this->setResponse($this->data);
+            return $this->getResponse();
+        }
         // validation rules
         $rules = ['formation_type' => 'required|regex:/^[1]$/'];
 
@@ -455,11 +479,12 @@ class BasketController extends Controller
             ,'programs.region','programs.schooling_cost','programs.length_of_the_formation as length','programs.access_rate','programs.town','programs.type_of_formation as type','programs.number_of_students')
             ->leftJoin('programs', 'programs.id', '=', 'baskets.program_id')
             ->where('baskets.type' ,$unchecked )
+            ->where('baskets.program_id' ,$id)
             ->get();
 
 
         if(!isset($baskets[0])){
-            $this->data = ['status_code' => 200, 'code' => 100402, 'response' => '', 'success' => ['Not any unchecked formation found in the basket.'], 'data' => []];
+            $this->data = ['status_code' => 200, 'code' => 100402, 'response' => '', 'success' => ['Not unchecked formation found in the basket.'], 'data' => []];
             $this->setResponse($this->data);
             return $this->getResponse();
         }
